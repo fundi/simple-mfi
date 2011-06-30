@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2011 Kevin Gibbs and The Simple MFI Project
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+    http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="7sp"
+    >
+<TextView  
+	android:id="@+id/loan_client_name"
+    android:layout_width="fill_parent" 
+    android:text="@string/client_title"
+    android:gravity="center"
+    android:layout_height="wrap_content"
+    android:textSize="18sp"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    
+    />
+ <TextView  
+	android:id="@+id/loan_name"
+    android:layout_width="fill_parent" 
+    android:text="@string/loan_title"
+    android:gravity="center"
+    android:layout_height="wrap_content"
+    android:textSize="18sp"
+    android:textAppearance="?android:attr/textAppearanceMedium"    
+    android:paddingBottom="7sp"
+    />
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    >
+ <TextView  
+    android:text="@string/loan_application_date_title"
+    android:gravity="left|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:textColor="@android:color/secondary_text_dark"
+    android:textSize="18sp"
+    />
+<TextView  
+	android:id="@+id/loan_application_date"
+    android:text="20/4/2011"
+    android:gravity="right|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:layout_weight="1"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    />
+</LinearLayout>
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    >
+ <TextView  
+    android:text="@string/loan_issued_date_title"
+    android:gravity="left|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:textColor="@android:color/secondary_text_dark"
+    android:textSize="18sp"
+    />
+<TextView  
+	android:id="@+id/loan_issued_date"
+    android:text="28/4/2011"
+    android:gravity="right|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:layout_weight="1"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    />
+</LinearLayout>
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    >
+ <TextView  
+    android:text="@string/loan_amount_title"
+    android:gravity="left|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:textColor="@android:color/secondary_text_dark"
+    android:textSize="18sp"
+    />
+<TextView  
+	android:id="@+id/loan_amount"
+    android:text="44500"
+    android:gravity="right|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:layout_weight="1"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    />
+</LinearLayout>
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    >
+ <TextView  
+    android:text="@string/loan_installments_title"
+    android:gravity="left|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:textColor="@android:color/secondary_text_dark"
+    android:textSize="18sp"
+    />
+<TextView  
+	android:id="@+id/loan_installments"
+    android:text="12"
+    android:gravity="right|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:layout_weight="1"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    />
+</LinearLayout>
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    >
+ <TextView  
+    android:text="@string/loan_status_title"
+    android:gravity="left|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:textColor="@android:color/secondary_text_dark"
+    android:textSize="18sp"
+    />
+<TextView  
+	android:id="@+id/loan_status"
+    android:text="In Repayment"
+    android:gravity="right|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:layout_weight="1"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    />
+</LinearLayout>
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    >
+ <TextView  
+    android:text="@string/loan_disbursement_date_title"
+    android:gravity="left|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:textColor="@android:color/secondary_text_dark"
+    android:textSize="18sp"
+    />
+<TextView  
+	android:id="@+id/loan_disbursement_date"
+    android:text="03/05/2011"
+    android:gravity="right|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:layout_weight="1"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    />
+</LinearLayout>
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    >
+ <TextView  
+    android:text="@string/loan_normal_payment_title"
+    android:gravity="left|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:textColor="@android:color/secondary_text_dark"
+    android:textSize="18sp"
+    />
+<TextView  
+	android:id="@+id/loan_normal_payment"
+    android:text="1440"
+    android:gravity="right|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:layout_weight="1"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    />
+</LinearLayout>
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    >
+ <TextView  
+    android:text="@string/loan_balance_title"
+    android:gravity="left|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:textColor="@android:color/secondary_text_dark"
+    android:textSize="18sp"
+    />
+<TextView  
+	android:id="@+id/loan_balance"
+    android:text="22000"
+    android:gravity="right|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:layout_weight="1"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    />
+</LinearLayout>
+
+</LinearLayout>
+

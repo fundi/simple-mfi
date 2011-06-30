@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2011 Kevin Gibbs and The Simple MFI Project
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+    http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<resources>
+    <string name="app_name">Simple MFI</string>
+    
+    <!--  Simple MFI Strings -->
+    <string name="officer_selection_title">Select Officer</string>
+    <string name="client_list_title">Client List</string>
+    <string name="loan_detail_title">Loan Detail</string>
+    
+    <string name="menu_sync">Sync</string>
+    <string name="menu_change_group">Change Group</string>
+    <string name="menu_change_officer">Change Officer</string>
+    <string name="menu_add_officer">Add Officer</string>
+    
+    <string name="client_savings">Savings:</string>
+    <string name="client_transactions">Transactions:</string>
+    
+    <string name="loan_prefix">Loan:</string>
+    <string name="loan_application_date_title">Application Date:</string>
+    <string name="loan_issued_date_title">Issued Date:</string>
+    <string name="loan_amount_title">Amount:</string>
+    <string name="loan_installments_title">Installments:</string>
+    <string name="loan_status_title">Status:</string>
+    <string name="loan_disbursement_date_title">Disbursed:</string>
+    <string name="loan_balance_title">Balance:</string>
+    <string name="loan_normal_payment_title">Normal Payment:</string>
+    
+    <string-array name="status_map">
+		<item>Application</item>
+		<item>Being Processed</item>
+		<item>Rejected</item>
+		<item>Approved</item>
+		<item>Issued</item>
+		<item>Being Repaid</item>
+		<item>Repaid</item>
+	</string-array>
+    
+    <!--  Example data, used only for graphical layout tool -->
+    <string name="collection_title">May 2011</string>
+    <string name="client_title">Client Name</string>
+    <string name="loan_title">Loan AL04221</string>
+    <string-array name="clients_short">
+        <item>Jane M.</item>
+        <item>Richard T.</item>
+        <item>Mary M.</item>
+        <item>Joseph G.</item>
+        <item>Sally H.</item>
+        <item>Charity S.</item>
+        <item>Ruth E.</item>
+        <item>Sarah P.</item>
+        <item>John G.</item>
+    </string-array>
+    
+</resources>
