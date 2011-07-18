@@ -17,7 +17,7 @@ package org.simplemfi.app;
 
 import java.util.List;
 
-import org.jsonstore.JsonStore;
+import org.mantasync.Store;
 import org.simplemfi.app.R;
 
 import android.app.ListActivity;
@@ -46,7 +46,7 @@ public class GroupListActivity extends ListActivity {
         Intent mainIntent = getIntent();
         if (mainIntent.getData() == null) {
         	mainIntent.setData(
-        			JsonStore.Base.CONTENT_URI_BASE.buildUpon().appendEncodedPath("app/Group").build());
+        			Store.Base.CONTENT_URI_BASE.buildUpon().appendEncodedPath("app/Group").build());
         } 
        
         final Uri uri = mainIntent.getData();

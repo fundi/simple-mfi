@@ -37,8 +37,14 @@
     <string name="loan_installments_title">Installments:</string>
     <string name="loan_status_title">Status:</string>
     <string name="loan_disbursement_date_title">Disbursed:</string>
+    <string name="loan_arrears_title">Arrears Amount:</string>
+    <string name="loan_arrears_30_title">1 to 30 Days:</string>
+    <string name="loan_arrears_90_title">31 to 90 Days:</string>
+    <string name="loan_arrears_180_title">91 to 180 Days:</string>
+    <string name="loan_arrears_over180_title">Over 180 Days:</string>
     <string name="loan_balance_title">Balance:</string>
     <string name="loan_normal_payment_title">Normal Payment:</string>
+    <string name="loan_repayments_title">Repayments:</string>
     
     <string-array name="status_map">
 		<item>Application</item>
@@ -48,6 +54,18 @@
 		<item>Issued</item>
 		<item>Being Repaid</item>
 		<item>Repaid</item>
+	</string-array>
+	
+	<string-array name="transaction_type_map">
+        <!-- Value 0 is an undefined transaction type, hence empty. -->
+		<item></item>
+		<item>Deposit</item>
+		<item>Loan</item>
+		<item>Repayment</item>
+		<item>Withdrawal</item>
+		<item>Interest Due</item>
+		<item>Interest Paid</item>
+		<item>Down Payment</item>
 	</string-array>
     
     <!--  Example data, used only for graphical layout tool -->

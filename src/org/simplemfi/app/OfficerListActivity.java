@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.jsonstore.JsonStore;
-import org.jsonstore.JsonStore.Meta;
+import org.mantasync.Store;
+import org.mantasync.Store.Meta;
 import org.simplemfi.app.R;
 
 import android.app.AlertDialog;
@@ -69,7 +69,7 @@ public class OfficerListActivity extends ListActivity {
 		Intent intent = getIntent();
 		if (intent.getData() == null) {
 			intent.setData(
-					JsonStore.Base.CONTENT_URI_BASE.buildUpon().appendEncodedPath("app/Officer").build());
+					Store.Base.CONTENT_URI_BASE.buildUpon().appendEncodedPath("app/Officer").build());
 		} 
 
 		if (Util.startInitialSyncIfNecessary(getContentResolver(), this)) {
@@ -131,7 +131,7 @@ public class OfficerListActivity extends ListActivity {
 			break;
 		case REQUEST_SYNC_ACTIVITY:
 			// Ensure that we actually have data and that sync completed. 
-			if (!org.jsonstore.Util.neededTablesArePresent(
+			if (!org.mantasync.Util.neededTablesArePresent(
 		    		Meta.CONTENT_URI.buildUpon().appendEncodedPath("app/").build(),
 		    		getContentResolver())) {
 				// If not, ask for another officer to be added.
@@ -226,8 +226,7 @@ public class OfficerListActivity extends ListActivity {
 			       .setTitle("Error")
 			       .setIcon(android.R.drawable.ic_dialog_alert);
 			AlertDialog alert = builder.create();
-			alert.show();
-			return null;
+			return alert;
 		}
 		}
 

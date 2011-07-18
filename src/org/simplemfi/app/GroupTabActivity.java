@@ -17,7 +17,7 @@ package org.simplemfi.app;
 
 import java.util.List;
 
-import org.jsonstore.JsonStore.Meta;
+import org.mantasync.Store.Meta;
 import org.simplemfi.app.R;
 
 import android.app.TabActivity;

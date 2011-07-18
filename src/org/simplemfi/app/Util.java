@@ -18,8 +18,8 @@ package org.simplemfi.app;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.jsonstore.JsonStore;
-import org.jsonstore.JsonStore.Meta;
+import org.mantasync.Store;
+import org.mantasync.Store.Meta;
 import org.simplemfi.app.R;
 
 import android.app.Activity;
@@ -31,6 +31,11 @@ import android.content.Intent;
 import android.content.pm.ProviderInfo;
 import android.database.Cursor;
 import android.net.Uri;
+import android.view.View;
+import android.view.View.MeasureSpec;
+import android.view.ViewGroup;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 
 public class Util {
 
@@ -48,13 +53,13 @@ public class Util {
 			return false;
 		}
 		
-		ProviderInfo info = context.getPackageManager().resolveContentProvider(JsonStore.AUTHORITY, 0);
+		ProviderInfo info = context.getPackageManager().resolveContentProvider(Store.AUTHORITY, 0);
 		if (info == null) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(context);
 			String app_name = context.getString(R.string.app_name);
 			builder.setMessage(app_name + " can't be started, because the needed application "
-					+ "\"" + JsonStore.APPLICATION_NAME + "\" is missing.\n\n"
-					+ "Please install the application \"" + JsonStore.APPLICATION_NAME + "\", and then try again.")
+					+ "\"" + Store.APPLICATION_NAME + "\" is missing.\n\n"
+					+ "Please install the application \"" + Store.APPLICATION_NAME + "\", and then try again.")
 			       .setCancelable(false)
 			       .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 			           public void onClick(DialogInterface dialog, int id) {
@@ -69,11 +74,11 @@ public class Util {
 		}
 
 		// We were just launched. Check to see if we have our initial data.
-	    org.jsonstore.Util.enableGoogleAccountsForSync(context);
+	    org.mantasync.Util.enableGoogleAccountsForSync(context);
 	    
 		resolver.insert(Meta.CONTENT_URI.buildUpon().appendEncodedPath("app/Officer").build(), new ContentValues());
 	
-	    boolean tablesPresent = org.jsonstore.Util.neededTablesArePresent(
+	    boolean tablesPresent = org.mantasync.Util.neededTablesArePresent(
 	    		Meta.CONTENT_URI.buildUpon().appendEncodedPath("app/").build(),
 	    		resolver);
 	    
@@ -134,4 +139,24 @@ public class Util {
         c.close();
         return result;
 	}
+	
+	public static void setListViewHeightBasedOnChildren(ListView listView) {
+        final ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null) {
+            return;
+        }
+        int totalHeight = 0;
+        int desiredWidth = MeasureSpec.makeMeasureSpec(listView.getWidth(), MeasureSpec.AT_MOST);
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            View listItem = listAdapter.getView(i, null, listView);
+            listItem.measure(desiredWidth, MeasureSpec.UNSPECIFIED);
+            totalHeight += listItem.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        listView.setLayoutParams(params);
+        listView.requestLayout();
+    }
+
 }

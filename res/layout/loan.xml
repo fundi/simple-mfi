@@ -14,11 +14,19 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/loan_scroll"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+ 	>
+<LinearLayout 
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:padding="7sp"
+    android:paddingLeft="7sp"
+    android:paddingTop="7sp"
+    android:paddingBottom="7sp"
+    android:paddingRight="14sp"
     >
 <TextView  
 	android:id="@+id/loan_client_name"
@@ -207,6 +215,121 @@
     android:layout_height="wrap_content"
     >
  <TextView  
+    android:text="@string/loan_arrears_title"
+    android:gravity="left|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:textColor="@android:color/secondary_text_dark"
+    android:textSize="18sp"
+    />
+<TextView  
+	android:id="@+id/loan_arrears"
+    android:text="22000"
+    android:gravity="right|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:layout_weight="1"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    />
+</LinearLayout>
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    >
+ <TextView  
+    android:text="@string/loan_arrears_30_title"
+    android:gravity="right|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:textColor="@android:color/secondary_text_dark"
+    android:textSize="18sp"
+    />
+<TextView  
+	android:id="@+id/loan_arrears_30"
+    android:text="22000"
+    android:gravity="right|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:layout_weight="1"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    />
+</LinearLayout>
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    >
+ <TextView  
+    android:text="@string/loan_arrears_90_title"
+    android:gravity="right|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:textColor="@android:color/secondary_text_dark"
+    android:textSize="18sp"
+    />
+<TextView  
+	android:id="@+id/loan_arrears_90"
+    android:text="22000"
+    android:gravity="right|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:layout_weight="1"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    />
+</LinearLayout>
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    >
+ <TextView  
+    android:text="@string/loan_arrears_180_title"
+    android:gravity="right|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:textColor="@android:color/secondary_text_dark"
+    android:textSize="18sp"
+    />
+<TextView  
+	android:id="@+id/loan_arrears_180"
+    android:text="22000"
+    android:gravity="right|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:layout_weight="1"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    />
+</LinearLayout>
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    >
+ <TextView  
+    android:text="@string/loan_arrears_over180_title"
+    android:gravity="right|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:textColor="@android:color/secondary_text_dark"
+    android:textSize="18sp"
+    />
+<TextView  
+	android:id="@+id/loan_arrears_over180"
+    android:text="22000"
+    android:gravity="right|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:layout_weight="1"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    />
+</LinearLayout>
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    >
+ <TextView  
     android:text="@string/loan_balance_title"
     android:gravity="left|center"
     android:layout_height="26sp"
@@ -224,6 +347,20 @@
     android:textAppearance="?android:attr/textAppearanceMedium"
     />
 </LinearLayout>
-
+ <TextView  
+    android:text="@string/loan_repayments_title"
+    android:gravity="left|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:textColor="@android:color/secondary_text_dark"
+    android:textSize="18sp"
+    />
+ <ListView 
+ 	android:id="@+id/loan_schedule"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+    </ListView>
 </LinearLayout>
+</ScrollView>
 

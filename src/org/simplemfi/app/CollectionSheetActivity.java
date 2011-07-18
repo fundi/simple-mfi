@@ -30,9 +30,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.SimpleCursorAdapter.ViewBinder;
 import android.widget.TextView;
 
 public class CollectionSheetActivity extends ListActivity {
+	static final String TAG = "CollectionSheetActivity";
+	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,11 +46,14 @@ public class CollectionSheetActivity extends ListActivity {
         header.setText(DateFormat.format("MMMM yyyy", new Date()));
         
         Uri uri = getIntent().getData();
-        Cursor cursor = managedQuery(uri, new String[] { "key", "name", "payment_due" }, 
+        Cursor cursor = managedQuery(uri, new String[] { "key", "name", 
+        		"round(case when Loan.balance - arrears > 0 then payment_due + arrears else arrears end) as payment_due", 
+        		"arrears", "principal_arrears_30", "principal_arrears_90", "principal_arrears_180", "principal_arrears_over180" }, 
         		"Loan.balance > 0", null, Util.DEFAULT_SORT_ORDER);
 
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.collection_item, cursor,
-                new String[] { "name", "payment_due" }, new int[] { android.R.id.text1, android.R.id.text2 });
+                new String[] { "name", "payment_due", "arrears" }, 
+                new int[] { android.R.id.text1, android.R.id.text2, R.id.list_item });
         setListAdapter(adapter);
         
         getListView().setOnItemClickListener(new OnItemClickListener() {
@@ -65,5 +71,46 @@ public class CollectionSheetActivity extends ListActivity {
                 }
         	}	
         });
+        
+        // Color rows based on arrears amount and severity.
+        adapter.setViewBinder(new ViewBinder() {
+        	int mArrearsColumn = -1;
+        	int mFirstCategory = -1;
+        	final int mNumCategories = 4;
+			@Override
+			public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
+				if (mArrearsColumn == -1) {
+					mArrearsColumn = cursor.getColumnIndex("arrears");
+					mFirstCategory = mArrearsColumn + 1;
+				}
+				if (columnIndex != mArrearsColumn) {
+					return false;
+				}
+				double arrears = cursor.getDouble(mArrearsColumn);
+				if (arrears <= 0) {
+					view.setBackgroundResource(R.layout.list_item_black);
+					return true;
+				}
+				int category = 0;
+				for (int i = mFirstCategory; i < mFirstCategory + mNumCategories; ++i) {
+					if (cursor.getDouble(i) > 0) {
+						category = i - mFirstCategory;
+					}
+				}
+				switch (category) {
+				case 0:
+					view.setBackgroundResource(R.layout.list_item_yellow);
+					break;
+				case 1:
+					view.setBackgroundResource(R.layout.list_item_orange);
+					break;
+				case 2:
+				case 3:
+					view.setBackgroundResource(R.layout.list_item_red);
+					break;
+				}
+				return true;
+			}
+		});
     }
 }

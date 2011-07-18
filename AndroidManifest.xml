@@ -36,7 +36,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.PICK_ACTIVITY" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="vnd.android.cursor.dir/vnd.jsonstore.app.Client" />
+                <data android:mimeType="vnd.android.cursor.dir/vnd.mantastore.app.Client" />
             </intent-filter>
         </activity>
         <activity android:name=".CollectionSheetActivity"
@@ -57,7 +57,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.PICK" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="vnd.android.cursor.dir/vnd.jsonstore.app.Officer" />
+                <data android:mimeType="vnd.android.cursor.dir/vnd.mantastore.app.Officer" />
             </intent-filter>
         </activity>
         <activity android:name=".GroupListActivity"
@@ -65,7 +65,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.PICK" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="vnd.android.cursor.dir/vnd.jsonstore.app.Group" />
+                <data android:mimeType="vnd.android.cursor.dir/vnd.mantastore.app.Group" />
             </intent-filter>
         </activity>
         <activity android:name=".ClientActivity"
@@ -73,7 +73,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="vnd.android.cursor.item/vnd.jsonstore.app.Client" />
+                <data android:mimeType="vnd.android.cursor.item/vnd.mantastore.app.Client" />
             </intent-filter>
         </activity>
         <activity android:name=".LoanActivity"
@@ -81,7 +81,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="vnd.android.cursor.item/vnd.jsonstore.app.Loan" />
+                <data android:mimeType="vnd.android.cursor.item/vnd.mantastore.app.Loan" />
             </intent-filter>
         </activity>
         

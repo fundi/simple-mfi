@@ -17,12 +17,15 @@ package org.simplemfi.app;
 
 import java.util.List;
 
-import org.jsonstore.JsonStore;
-import org.jsonstore.JsonStore.Base;
+import org.mantasync.Store;
+import org.mantasync.Store.Base;
 import org.simplemfi.app.R;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.ContentObserver;
 import android.database.Cursor;
@@ -43,6 +46,8 @@ public class ClientActivity extends Activity {
 
     private static final String TAG = "ClientActivity";
 
+    private static final int DIALOG_TRANSACTION_DETAIL = 0;
+    
     // Menu item ids
     public static final int MENU_ITEM_SYNC = Menu.FIRST;
     
@@ -86,6 +91,13 @@ public class ClientActivity extends Activity {
                     new int[] { android.R.id.text1, android.R.id.text2, R.id.text3 });
             final ListView listView = ((ListView)findViewById(R.id.loans));
             listView.setAdapter(adapter);
+            cursor.registerContentObserver(new ContentObserver(new Handler()) {
+            	@Override
+            	public void onChange(boolean selfChange) {
+            		Util.setListViewHeightBasedOnChildren(listView);
+            	}
+			});
+            Util.setListViewHeightBasedOnChildren(listView);
             
             listView.setOnItemClickListener(new OnItemClickListener() {
             	public void onItemClick(AdapterView<?> parent, View view,
@@ -103,13 +115,41 @@ public class ClientActivity extends Activity {
         {
             Uri paymentUri = uri.buildUpon().path(path.get(0)).appendPath("Transaction").build();
             Cursor cursor = managedQuery(paymentUri, 
-            		new String[] { "date(posting_date,'unixepoch') as posting_date", "description", "round(amount) as amount" }, 
+            		new String[] { "entryid", "clientid", "documentid", "transaction_type", 
+            		"date(posting_date,'unixepoch') as posting_date", "description", "round(amount) as amount" }, 
             		"clientid = ?", new String[] { path.get(2) }, "posting_date desc");
-
             SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.client_item, cursor,
             		new String[] { "posting_date", "description", "amount" }, 
             		new int[] { android.R.id.text1, android.R.id.text2, R.id.text3 });
-            ((ListView)findViewById(R.id.transactions)).setAdapter(adapter);
+            final ListView listView = ((ListView)findViewById(R.id.transactions));
+            listView.setAdapter(adapter);
+            cursor.registerContentObserver(new ContentObserver(new Handler()) {
+            	@Override
+            	public void onChange(boolean selfChange) {
+            		Util.setListViewHeightBasedOnChildren(listView);
+            	}
+			});
+            Util.setListViewHeightBasedOnChildren(listView);
+            
+            listView.setOnItemClickListener(new OnItemClickListener() {
+            	public void onItemClick(AdapterView<?> parent, View view,
+            			int position, long id) {
+                    Cursor cursor = (Cursor)listView.getAdapter().getItem(position);
+                    int loc = cursor.getColumnIndex("description");
+                    if (loc != -1) {
+	                    Bundle bundle = new Bundle();
+	                    
+	                    String[] keys = { "entryid", "clientid", "posting_date", "documentid", 
+	                    		"description", "amount" };
+	                    for (int i = 0; i < keys.length; ++i) {
+	                    	bundle.putCharSequence(keys[i], cursor.getString(cursor.getColumnIndex(keys[i])));
+	                    }
+	                    bundle.putInt("transaction_type", cursor.getInt(cursor.getColumnIndex("transaction_type")));
+	                    
+	                    showDialog(DIALOG_TRANSACTION_DETAIL, bundle);
+                    }
+            	}	
+            });
         }
         
         getContentResolver().registerContentObserver(getIntent().getData(), false, new ChangeObserver());
@@ -126,7 +166,7 @@ public class ClientActivity extends Activity {
 		if (mCursor.isAfterLast()) {
 			return;
 		}
-		int keyCol = mCursor.getColumnIndex(JsonStore.Base.KEY);
+		int keyCol = mCursor.getColumnIndex(Store.Base.KEY);
 		int nameCol = mCursor.getColumnIndex("name");
 		if (keyCol != -1 && nameCol != -1) {
 			TextView name = (TextView)findViewById(R.id.client_name);
@@ -168,10 +208,62 @@ public class ClientActivity extends Activity {
         switch (item.getItemId()) {
     	case MENU_ITEM_SYNC:
     		// Launch activity to sync
-            ContentResolver.requestSync(null, JsonStore.AUTHORITY, new Bundle());
+            ContentResolver.requestSync(null, Store.AUTHORITY, new Bundle());
     		return true;
     	}
         return super.onOptionsItemSelected(item);
+    }
+    
+    @Override
+    protected Dialog onCreateDialog(int id, Bundle bundle) {
+    	switch (id) {
+    		case DIALOG_TRANSACTION_DETAIL:
+    		{
+    			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    			builder.setMessage("")
+    				   .setCancelable(false)
+    			       .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+    			           public void onClick(DialogInterface dialog, int id) {
+    			        	   dialog.dismiss();
+    			           }
+    			       })
+    			       .setTitle("Transaction Details")
+    			       .setIcon(android.R.drawable.ic_dialog_info);
+    			AlertDialog alert = builder.create();
+    			return alert;
+    		}
+    	}
+    	
+    	return super.onCreateDialog(id, bundle);
+    }
+    
+    @Override
+    protected void onPrepareDialog(int id, Dialog dialog, Bundle args) {
+    	super.onPrepareDialog(id, dialog, args);
+    	
+    	switch (id) {
+    		case DIALOG_TRANSACTION_DETAIL:
+    			AlertDialog alert = (AlertDialog)dialog;
+    			String[] transaction_type_map = getResources().getStringArray(R.array.transaction_type_map);
+    			String transaction_type = "";
+    			int transaction_type_int = args.getInt("transaction_type");
+    			if (transaction_type_int >= 0 && transaction_type_int < transaction_type_map.length) {
+    				transaction_type = transaction_type_map[transaction_type_int];
+    			}
+    			String message = String.format(
+    					"Entry: %s\n"+
+    					"Receipt: %s\n"+
+    					"Posting Date: %s\n"+
+    					"Type: %s\n"+
+    					"Description: %s\n"+
+    					"Amount: %s",
+    					args.getString("entryid"), args.getString("documentid"),
+    					args.getString("posting_date"), transaction_type,
+    					args.getString("description"), args.getString("amount"));
+    			
+    			alert.setMessage(message);
+    			break;
+    	}
     }
 
 }
