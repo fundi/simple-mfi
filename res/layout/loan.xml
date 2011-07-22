@@ -215,6 +215,82 @@
     android:layout_height="wrap_content"
     >
  <TextView  
+    android:text="@string/loan_grace_period_title"
+    android:gravity="left|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:textColor="@android:color/secondary_text_dark"
+    android:textSize="18sp"
+    />
+<TextView  
+	android:id="@+id/loan_grace_period"
+    android:text="2"
+    android:gravity="right|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:layout_weight="1"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    />
+<TextView  
+    android:text="M, "
+    android:gravity="right|center"
+    android:layout_height="26sp"
+    android:layout_width="wrap_content"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    />
+<TextView  
+	android:id="@+id/loan_grace_period_pays_interest"
+    android:text="Pays Int."
+    android:gravity="right|center"
+    android:layout_height="26sp"
+    android:layout_width="wrap_content"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    />
+</LinearLayout>
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    >
+ <TextView  
+    android:text="@string/loan_interest_rate_title"
+    android:gravity="left|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:textColor="@android:color/secondary_text_dark"
+    android:textSize="18sp"
+    />
+<TextView  
+	android:id="@+id/loan_interest_rate"
+    android:text="32"
+    android:gravity="right|center"
+    android:layout_height="26sp"
+    android:layout_width="160dip"
+    android:layout_weight="1"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    />
+<TextView  
+    android:text="%, "
+    android:gravity="right|center"
+    android:layout_height="26sp"
+    android:layout_width="wrap_content"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    />
+<TextView  
+	android:id="@+id/loan_interest_method"
+    android:text="Reducing"
+    android:gravity="right|center"
+    android:layout_height="26sp"
+    android:layout_width="wrap_content"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    />
+</LinearLayout>
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    >
+ <TextView  
     android:text="@string/loan_arrears_title"
     android:gravity="left|center"
     android:layout_height="26sp"
@@ -355,6 +431,7 @@
     android:textColor="@android:color/secondary_text_dark"
     android:textSize="18sp"
     />
+<include layout="@layout/loan_schedule_title"/>
  <ListView 
  	android:id="@+id/loan_schedule"
     android:layout_width="fill_parent"

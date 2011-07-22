@@ -16,6 +16,9 @@
 package org.simplemfi.app;
 
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.mantasync.Store;
@@ -25,6 +28,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.database.ContentObserver;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,6 +45,8 @@ import android.view.View;
 public class LoanActivity extends Activity {
 
     private static final String TAG = "LoanActivity";
+    
+    private static final SimpleDateFormat sDueDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     // Menu item ids
     public static final int MENU_ITEM_SYNC = Menu.FIRST;
@@ -62,7 +68,12 @@ public class LoanActivity extends Activity {
         }
     }
 	
-	private Cursor mCursor;
+	private Cursor mCursor = null;
+	private Cursor mStatementCursor = null;
+	private Cursor mScheduleCursor = null;
+	
+	private SimpleCursorAdapter mAdapter = null;
+	private ListView mListView = null;
 	
 	/** Called when the activity is first created. */
     @Override
@@ -71,45 +82,17 @@ public class LoanActivity extends Activity {
         setTitle(R.string.loan_detail_title);
         setContentView(R.layout.loan);
        
-        Uri uri = getIntent().getData();
-        List<String> path = uri.getPathSegments();
         getContentResolver().registerContentObserver(getIntent().getData(), false, new ChangeObserver());
+        mListView = ((ListView)findViewById(R.id.loan_schedule));
         
         updateDisplay();
+ 
+        mAdapter = new SimpleCursorAdapter(this, R.layout.loan_schedule_item, mScheduleCursor,
+                new String[] { "installment", "due_date", "amount", "paid" }, 
+                new int[] { android.R.id.text1, android.R.id.text2, R.id.text3, R.id.text4 });
+        mListView.setAdapter(mAdapter);
+        Util.setListViewHeightBasedOnChildren(mListView);
         
-        {
-    		String client_id = "";
-    		int clientCol = mCursor.getColumnIndex("clientid");
-    		if (clientCol != -1) {
-    			client_id = mCursor.getString(clientCol);
-    		}
-    		long issued_date = 0;
-    		int issuedDateCol = mCursor.getColumnIndex("issued_date");
-    		if (clientCol != -1) {
-    			issued_date = mCursor.getLong(issuedDateCol);
-    		}
-        	
-            final Uri statementUri = uri.buildUpon().path(path.get(0)).appendPath("Transaction").build();
-            Cursor cursor = managedQuery(statementUri, new String[] { 
-            		"strftime('%Y-%m', posting_date,'unixepoch') as posting_date", "sum(amount) as amount" }, 
-            		"clientid = ? and \"Transaction\".posting_date > " + issued_date + " and transaction_type = 3 group by "
-            		+"strftime('%Y-%m', posting_date,'unixepoch')", 
-            		new String[] { client_id }, 
-            		"posting_date asc");
-
-            SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.loan_repayment_item, cursor,
-                    new String[] { "posting_date", "amount" }, 
-                    new int[] { android.R.id.text1, android.R.id.text2 });
-            final ListView listView = ((ListView)findViewById(R.id.loan_schedule));
-            listView.setAdapter(adapter);
-            cursor.registerContentObserver(new ContentObserver(new Handler()) {
-            	@Override
-            	public void onChange(boolean selfChange) {
-            		Util.setListViewHeightBasedOnChildren(listView);
-            	}
-			});
-            Util.setListViewHeightBasedOnChildren(listView);
-        }
         final ScrollView scrollView = (ScrollView)findViewById(R.id.loan_scroll);
         scrollView.fullScroll(ScrollView.FOCUS_UP);
         scrollView.post(new Runnable() { 
@@ -119,6 +102,24 @@ public class LoanActivity extends Activity {
         }); 
     }
 	
+    private void setScheduleCursor(Cursor cursor) {
+    	if (mScheduleCursor != null) {
+    		mScheduleCursor.close();
+    	}
+    	mScheduleCursor = cursor;
+    	if (mAdapter != null) {
+    		mAdapter.changeCursor(mScheduleCursor);
+    	}
+    	if (mListView != null) {
+	    	mScheduleCursor.registerContentObserver(new ContentObserver(new Handler()) {
+	        	@Override
+	        	public void onChange(boolean selfChange) {
+	        		Util.setListViewHeightBasedOnChildren(mListView);
+	        	}
+			});
+    	}
+    }
+    
 	public void updateDisplay() {
 		if (mCursor == null || !mCursor.requery()) {
 			mCursor = managedQuery(getIntent().getData(),
@@ -126,7 +127,10 @@ public class LoanActivity extends Activity {
 					"date(issued_date, 'unixepoch') as issued_date", "amount", "installments", "status", 
 					"date(disbursement_date, 'unixepoch') as disbursement_date", "balance", "payment_due",
 					"arrears", "principal_arrears_30", "principal_arrears_90", "principal_arrears_180", 
-					"principal_arrears_over180", } , 
+					"principal_arrears_over180", "grace_period", "grace_period_pays_interest",
+					"(interest_rate * 100) as interest_rate", "interest_method", 
+					"(disbursement_date) as disbursement_date_secs"
+					} , 
 					null, null, null);
 		}
 		
@@ -155,16 +159,131 @@ public class LoanActivity extends Activity {
 		} else {
 			clearTextView(R.id.loan_disbursement_date);
 		}
-		setTextView(R.id.loan_balance, "balance", 0);
+		setTextView(R.id.loan_normal_payment, "payment_due", 0);
+		setTextView(R.id.loan_grace_period, "grace_period", 0);
+		setTextViewMap(R.id.loan_grace_period_pays_interest, "grace_period_pays_interest", R.array.grace_period_pays_interest_map);
+		setTextView(R.id.loan_interest_rate, "interest_rate", 0);
+		setTextViewMap(R.id.loan_interest_method, "interest_method", R.array.interest_method_map);
 		setTextView(R.id.loan_arrears, "arrears", 0);
 		setTextView(R.id.loan_arrears_30, "principal_arrears_30", 0, true);
 		setTextView(R.id.loan_arrears_90, "principal_arrears_90", 0, true);
 		setTextView(R.id.loan_arrears_180, "principal_arrears_180", 0, true);
 		setTextView(R.id.loan_arrears_over180, "principal_arrears_over180", 0, true);
-		setTextView(R.id.loan_normal_payment, "payment_due", 0);
+		setTextView(R.id.loan_balance, "balance", 0);
 		
+		MatrixCursor matrix = new MatrixCursor(new String[]{ "_id", "installment", "due_date", "amount", "paid"});
+	
+		double amount = getNamedDouble("amount"), interest_rate = getNamedDouble("interest_rate"), 
+			payment_due = getNamedDouble("payment_due");
+		int grace_period = getNamedInt("grace_period"), 
+			grace_period_pays_interest = getNamedInt("grace_period_pays_interest"),
+			installments = getNamedInt("installments"),
+			interest_method = getNamedInt("interest_method");
+		long disbursement_date = getNamedInt("disbursement_date_secs");
+		
+		String client_id = getNamedString("clientid");
+		
+		if (mStatementCursor == null || !mCursor.requery()) {
+	        Uri uri = getIntent().getData();
+	        List<String> path = uri.getPathSegments();
+	        final Uri statementUri = uri.buildUpon().path(path.get(0)).appendPath("Transaction").build();
+	        mStatementCursor = managedQuery(statementUri, new String[] { 
+	        		"((strftime('%Y', posting_date - " + disbursement_date + ", 'unixepoch', '-15 days') - 1970) * 12) + "+
+	        		"strftime('%m', posting_date - " + disbursement_date + ", 'unixepoch', '-15 days')  as installment", 
+	        		"round(sum(amount)) as amount" }, 
+	        		"clientid = ? and \"Transaction\".posting_date > " + disbursement_date + 
+	        		" and (transaction_type = 3 or transaction_type = 6) group by " +
+	        		"strftime('%Y-%m', posting_date - " + disbursement_date + ", 'unixepoch', '-15 days') ",
+	        		new String[] { client_id }, 
+	        		"installment asc");
+		}
+		int oldPos = mStatementCursor.getPosition();
+		mStatementCursor.moveToFirst();
+
+		int installmentCol = mStatementCursor.getColumnIndex("installment");
+		int amountCol = mStatementCursor.getColumnIndex("amount");
+		
+		double balance = amount;
+		for (int i = 0; i < grace_period + installments; ++i) {
+			Calendar cal = Calendar.getInstance();
+			cal.setTimeInMillis(disbursement_date * 1000);
+			cal.add(Calendar.MONTH, i + 1);
+			Date due_date = cal.getTime();
+			double principal_payment = 0;
+			double interest_payment = 0;
+			int interest_installments = grace_period_pays_interest > 0 ? installments + grace_period : installments;
+			switch (interest_method) {
+			// TODO Use an enum for these values, defined in R.arrays.interest_method_map
+			case 2:
+				interest_payment = ((interest_rate / 100) / (interest_installments)) * amount;
+				break;
+			case 3:
+				interest_payment = ((interest_rate / 100) / 12) * balance;
+				break;
+			default:
+				interest_payment = 0;
+				break;
+			}
+			principal_payment = payment_due - interest_payment;
+			double payment = interest_payment + principal_payment;
+			
+			if (i < grace_period) {
+				principal_payment = 0;
+				if (grace_period_pays_interest > 0) {
+					payment = interest_payment;
+				} else {
+					payment = 0;
+				}
+			}
+			double paidAmount = 0;
+			while (!mStatementCursor.isAfterLast() && mStatementCursor.getInt(installmentCol) < i + 1) {
+				mStatementCursor.moveToNext();
+			}
+			if (!mStatementCursor.isAfterLast() && mStatementCursor.getInt(installmentCol) == i + 1) {
+				paidAmount = mStatementCursor.getDouble(amountCol);
+			}
+			
+			matrix.addRow(new Object[]{ i, i + 1, sDueDateFormat.format(due_date), Math.round(payment), -Math.round(paidAmount) });
+			Log.e(TAG, "Schedule: " +  (i + 1) + " " + sDueDateFormat.format(due_date) + " " + payment + " " + paidAmount);
+			balance -= principal_payment;
+		}
+		mStatementCursor.moveToPosition(oldPos);
+		
+		setScheduleCursor(matrix);
 	}
 
+	public double getNamedDouble(String column_name) {
+		int col = mCursor.getColumnIndex(column_name);
+		if (col != -1) {
+			return mCursor.getDouble(col);
+		}
+		return 0.0;
+	}
+	
+	public int getNamedInt(String column_name) {
+		int col = mCursor.getColumnIndex(column_name);
+		if (col != -1) {
+			return mCursor.getInt(col);
+		}
+		return 0;
+	}
+	
+	public long getNamedLong(String column_name) {
+		int col = mCursor.getColumnIndex(column_name);
+		if (col != -1) {
+			return mCursor.getLong(col);
+		}
+		return 0;
+	}
+	
+	public String getNamedString(String column_name) {
+		int col = mCursor.getColumnIndex(column_name);
+		if (col != -1) {
+			return mCursor.getString(col);
+		}
+		return "";
+	}
+	
 	public void setTextView(int viewid, String column_name, int prefix_id) {
 		setTextView(viewid, column_name, prefix_id, false);
 	}

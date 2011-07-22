@@ -47,7 +47,15 @@ public class CollectionSheetActivity extends ListActivity {
         
         Uri uri = getIntent().getData();
         Cursor cursor = managedQuery(uri, new String[] { "key", "name", 
-        		"round(case when Loan.balance - arrears > 0 then payment_due + arrears else arrears end) as payment_due", 
+        		"round(case when Loan.balance > 0 then "+
+        		"((case when date(disbursement_date, 'unixepoch', grace_period || ' month') > date() then "+
+        		   "(case when grace_period_pays_interest then "+
+        		     "(case interest_method "+
+        		        "when 2 then ((interest_rate / (installments + grace_period)) * Loan.amount) "+
+        		        "when 3 then ((interest_rate / 12) * Loan.balance) "+
+        		        "else 0 end)"+
+        		   " else 0 end) else payment_due end) "+
+        		" + arrears) else arrears end) as payment_due",
         		"arrears", "principal_arrears_30", "principal_arrears_90", "principal_arrears_180", "principal_arrears_over180" }, 
         		"Loan.balance > 0", null, Util.DEFAULT_SORT_ORDER);
 

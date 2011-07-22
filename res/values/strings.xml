@@ -37,14 +37,18 @@
     <string name="loan_installments_title">Installments:</string>
     <string name="loan_status_title">Status:</string>
     <string name="loan_disbursement_date_title">Disbursed:</string>
+    <string name="loan_normal_payment_title">Normal Payment:</string>
+    <string name="loan_grace_period_title">Grace Period:</string>
+    <string name="loan_grace_period_pays_interest_title">Grace Interest?</string>
+    <string name="loan_interest_rate_title">Interest:</string>
+    <string name="loan_interest_method_title">Interest Method:</string>
     <string name="loan_arrears_title">Arrears Amount:</string>
     <string name="loan_arrears_30_title">1 to 30 Days:</string>
     <string name="loan_arrears_90_title">31 to 90 Days:</string>
     <string name="loan_arrears_180_title">91 to 180 Days:</string>
     <string name="loan_arrears_over180_title">Over 180 Days:</string>
     <string name="loan_balance_title">Balance:</string>
-    <string name="loan_normal_payment_title">Normal Payment:</string>
-    <string name="loan_repayments_title">Repayments:</string>
+    <string name="loan_repayments_title">Schedule:</string>
     
     <string-array name="status_map">
 		<item>Application</item>
@@ -66,6 +70,23 @@
 		<item>Interest Due</item>
 		<item>Interest Paid</item>
 		<item>Down Payment</item>
+	</string-array>
+    
+    <string-array name="interest_method_map">
+		<item></item>
+		<item>None</item>
+		<item>Flat</item>
+		<item>Reducing</item>
+	</string-array>
+	
+	<string-array name="grace_period_pays_interest_map">
+		<item>No Int.</item>
+		<item>Pays Int.</item>
+	</string-array>
+	
+	<string-array name="yes_no_map">
+		<item>No</item>
+		<item>Yes</item>
 	</string-array>
     
     <!--  Example data, used only for graphical layout tool -->
