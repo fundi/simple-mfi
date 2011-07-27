@@ -17,7 +17,7 @@ package org.simplemfi.app;
 
 import java.util.List;
 
-import org.mantasync.Store.Meta;
+import org.mantasync.Store.Meta_Table;
 import org.simplemfi.app.R;
 
 import android.app.TabActivity;
@@ -109,7 +109,7 @@ public class GroupTabActivity extends TabActivity {
     	case MENU_ITEM_SYNC:
     		// Launch activity to sync
     		startActivity(new Intent(Intent.ACTION_SYNC, 
-    				Meta.CONTENT_URI.buildUpon().appendEncodedPath("app/").build()));
+    				Meta_Table.CONTENT_URI.buildUpon().appendEncodedPath(Constants.APP + "/").build()));
     		return true;
     		
     	case MENU_ITEM_CHANGE_GROUP:

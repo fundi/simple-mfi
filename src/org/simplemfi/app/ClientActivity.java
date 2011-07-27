@@ -38,9 +38,13 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
+
 
 public class ClientActivity extends Activity {
 
@@ -113,9 +117,9 @@ public class ClientActivity extends Activity {
         }
         
         {
-            Uri paymentUri = uri.buildUpon().path(path.get(0)).appendPath("Transaction").build();
+            final Uri paymentUri = uri.buildUpon().path(path.get(0)).appendPath("Transaction").build();
             Cursor cursor = managedQuery(paymentUri, 
-            		new String[] { "entryid", "clientid", "documentid", "transaction_type", 
+            		new String[] { "key", "entryid", "clientid", "documentid", "transaction_type", 
             		"date(posting_date,'unixepoch') as posting_date", "description", "round(amount) as amount" }, 
             		"clientid = ?", new String[] { path.get(2) }, "posting_date desc");
             SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.client_item, cursor,
@@ -150,6 +154,7 @@ public class ClientActivity extends Activity {
                     }
             	}	
             });
+            Util.addReportErrorContextMenu(this, listView, paymentUri);
         }
         
         getContentResolver().registerContentObserver(getIntent().getData(), false, new ChangeObserver());
@@ -157,6 +162,22 @@ public class ClientActivity extends Activity {
         updateDisplay();
     }
 	
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+    		ContextMenuInfo menuInfo) {
+    	super.onCreateContextMenu(menu, v, menuInfo);
+    	MenuInflater inflater = getMenuInflater();
+    	inflater.inflate(R.menu.report_error_context_menu, menu);
+    }
+    
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+    	if (Util.handleReportErrorContextMenu(item, getContentResolver())) {
+    		return true;
+    	}
+    	return super.onContextItemSelected(item);
+    }
+    
 	public void updateDisplay() {
 		if (mCursor == null || !mCursor.requery()) {
 			mCursor = managedQuery(getIntent().getData(), null, null, null, null);

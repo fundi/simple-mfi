@@ -46,7 +46,7 @@ public class GroupListActivity extends ListActivity {
         Intent mainIntent = getIntent();
         if (mainIntent.getData() == null) {
         	mainIntent.setData(
-        			Store.Base.CONTENT_URI_BASE.buildUpon().appendEncodedPath("app/Group").build());
+        			Store.Base.CONTENT_URI_BASE.buildUpon().appendEncodedPath(Constants.APP + "/Group").build());
         } 
        
         final Uri uri = mainIntent.getData();

@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.mantasync.Store;
-import org.mantasync.Store.Meta;
+import org.mantasync.Store.Meta_Table;
 import org.simplemfi.app.R;
 
 import android.app.AlertDialog;
@@ -69,7 +69,7 @@ public class OfficerListActivity extends ListActivity {
 		Intent intent = getIntent();
 		if (intent.getData() == null) {
 			intent.setData(
-					Store.Base.CONTENT_URI_BASE.buildUpon().appendEncodedPath("app/Officer").build());
+					Store.Base.CONTENT_URI_BASE.buildUpon().appendEncodedPath(Constants.APP + "/Officer").build());
 		} 
 
 		if (Util.startInitialSyncIfNecessary(getContentResolver(), this)) {
@@ -132,7 +132,7 @@ public class OfficerListActivity extends ListActivity {
 		case REQUEST_SYNC_ACTIVITY:
 			// Ensure that we actually have data and that sync completed. 
 			if (!org.mantasync.Util.neededTablesArePresent(
-		    		Meta.CONTENT_URI.buildUpon().appendEncodedPath("app/").build(),
+		    		Meta_Table.CONTENT_URI.buildUpon().appendEncodedPath(Constants.APP + "/").build(),
 		    		getContentResolver())) {
 				// If not, ask for another officer to be added.
 				showDialog(DIALOG_NEED_ADDITIONAL_OFFICER);
@@ -203,7 +203,7 @@ public class OfficerListActivity extends ListActivity {
 
 					startActivityForResult(
 							new Intent(Intent.ACTION_SYNC, 
-									Meta.CONTENT_URI.buildUpon().appendEncodedPath("app/").build()),
+									Meta_Table.CONTENT_URI.buildUpon().appendEncodedPath(Constants.APP + "/").build()),
 									REQUEST_SYNC_ACTIVITY);
 				}
 			});

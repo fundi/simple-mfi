@@ -142,7 +142,7 @@ public class LoanActivity extends Activity {
 		if (clientCol != -1) {
 			String client_id = mCursor.getString(clientCol);
 			String client_name = Util.getFieldForKey(
-					Store.Base.CONTENT_URI_BASE.buildUpon().appendEncodedPath("app/Client/" + client_id).build(),
+					Store.Base.CONTENT_URI_BASE.buildUpon().appendEncodedPath(Constants.APP + "/Client/" + client_id).build(),
 					getContentResolver(), "name");
 
 			TextView view = (TextView)findViewById(R.id.loan_client_name);

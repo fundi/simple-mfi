@@ -26,6 +26,7 @@
     <string name="menu_change_group">Change Group</string>
     <string name="menu_change_officer">Change Officer</string>
     <string name="menu_add_officer">Add Officer</string>
+    <string name="menu_report_error">Report Error</string>
     
     <string name="client_savings">Savings:</string>
     <string name="client_transactions">Transactions:</string>
