@@ -133,7 +133,7 @@ public class ClientActivity extends Activity {
             		Util.setListViewHeightBasedOnChildren(listView);
             	}
 			});
-            Util.setListViewHeightBasedOnChildren(listView);
+            Util.setListViewHeightBasedOnChildren(listView, true);
             
             listView.setOnItemClickListener(new OnItemClickListener() {
             	public void onItemClick(AdapterView<?> parent, View view,

@@ -94,7 +94,6 @@ public class Util {
 	    	return true;
 	    }
 		
-	    org.mantasync.Util.enableGoogleAccountsForSync(context);
 		resolver.insert(Meta_Table.CONTENT_URI.buildUpon().appendEncodedPath(Constants.APP + "/Officer").build(), new ContentValues());
 	    boolean tablesPresent = org.mantasync.Util.neededTablesArePresent(
 	    		Meta_Table.CONTENT_URI.buildUpon().appendEncodedPath(Constants.APP + "/").build(),
@@ -113,6 +112,7 @@ public class Util {
 	
 	static public void askForApplicationMapping(final ContentResolver resolver, final Activity context) {
    		final EditText input = new EditText(context);
+   		input.setSingleLine();
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder
 	    .setTitle("Select Organization")
@@ -121,15 +121,24 @@ public class Util {
 	    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 	        public void onClick(DialogInterface dialog, int whichButton) {
 	            Editable value = input.getText();
-	    	    ContentValues values = new ContentValues();
+	            Uri mappingUri = Meta_Mapping.CONTENT_URI.buildUpon().appendEncodedPath(Constants.APP).build();
+	            ContentValues values = new ContentValues();
 	    	    values.put(Meta_Mapping.MAPPED_APP, value.toString());
-	    	    resolver.insert(Meta_Mapping.CONTENT_URI.buildUpon().appendEncodedPath(Constants.APP).build(), values);
+	            Cursor c = resolver.query(mappingUri, null, null, null, null);
+	            if (c.moveToFirst()) {
+	            	resolver.update(mappingUri, values, null, null);
+	            } else {
+	            	resolver.insert(mappingUri, values);
+	            }
+	    	    org.mantasync.Util.clearSyncedStatus(
+	    	    		Meta_Table.CONTENT_URI.buildUpon().appendEncodedPath(Constants.APP).build(), resolver);
 	            dialog.dismiss();
 	            // Restart the initial sync check, which should now get past the mapping check.
 	            startInitialSyncIfNecessary(resolver, context);
 	        }
 	    }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
 	        public void onClick(DialogInterface dialog, int whichButton) {
+	            dialog.dismiss();
 	            context.finish();
 	        }
 	    });
@@ -185,20 +194,29 @@ public class Util {
 	}
 	
 	public static void setListViewHeightBasedOnChildren(ListView listView) {
+		setListViewHeightBasedOnChildren(listView, false);
+	}
+	
+	public static void setListViewHeightBasedOnChildren(ListView listView, boolean useSpeedupHack) {
         final ListAdapter listAdapter = listView.getAdapter();
         if (listAdapter == null) {
             return;
         }
         int totalHeight = 0;
         int desiredWidth = MeasureSpec.makeMeasureSpec(listView.getWidth(), MeasureSpec.AT_MOST);
-        for (int i = 0; i < listAdapter.getCount(); i++) {
+        int count = listAdapter.getCount();
+        for (int i = 0; i < count; i++) {
             View listItem = listAdapter.getView(i, null, listView);
             listItem.measure(desiredWidth, MeasureSpec.UNSPECIFIED);
             totalHeight += listItem.getMeasuredHeight();
+            if (useSpeedupHack) {
+            	totalHeight *= count;
+            	break;
+            }
         }
 
         ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        params.height = totalHeight + (listView.getDividerHeight() * (count - 1));
         listView.setLayoutParams(params);
         listView.requestLayout();
     }

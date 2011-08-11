@@ -51,6 +51,7 @@ public class OfficerListActivity extends ListActivity {
 	// Dialog ids
 	public static final int DIALOG_ADD_OFFICER = 0;
 	public static final int DIALOG_NEED_ADDITIONAL_OFFICER = 1;
+	public static final int DIALOG_NEED_NEW_ORGANIZATION = 2;
 
 	// Activity request ids
 	public static final int REQUEST_SYNC_ACTIVITY = 0;
@@ -80,15 +81,15 @@ public class OfficerListActivity extends ListActivity {
 
 		Uri uri = getIntent().getData();
 		Uri queryUri = uri.buildUpon().encodedPath(uri.getEncodedPath() + ".Client").build();
-		final Cursor cursor = managedQuery(queryUri, new String[] { "Officer.key as key", "Officer.name" }, 
+		final Cursor cursor = managedQuery(queryUri, new String[] { "Officer.key as key", "Officer.name as officer_name" }, 
 				"group by Officer.key", null, "Officer.name asc");
 
-		final MatrixCursor addOfficer = new MatrixCursor(new String[] { "key", "Officer.name", "_id" });
+		final MatrixCursor addOfficer = new MatrixCursor(new String[] { "key", "officer_name", "_id" });
 		addOfficer.addRow(new Object[] { "add_officer", "Add Officer...", new Integer(Integer.MAX_VALUE) } );
 		MergeCursor merge = new MergeCursor(new Cursor[] { cursor, addOfficer } );
 
 		SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, merge,
-				new String[] { "Officer.name" }, new int[] { android.R.id.text1 });
+				new String[] { "officer_name" }, new int[] { android.R.id.text1 });
 		setListAdapter(adapter);
 
 		getListView().setOnItemClickListener(new OnItemClickListener() {
@@ -122,8 +123,17 @@ public class OfficerListActivity extends ListActivity {
 		switch (requestCode) {
 		case REQUEST_INITIAL_SYNC_ACTIVITY:
 			if (resultCode == RESULT_OK) {
-				// Select an officer, which will cause more sync to occur.
-				showDialog(DIALOG_ADD_OFFICER);
+				// See if we actually got the officer data we need.
+				if (org.mantasync.Util.neededTablesArePresent(
+			    		Meta_Table.CONTENT_URI.buildUpon().appendEncodedPath(Constants.APP + "/").build(),
+			    		getContentResolver())) {
+					// Select an officer, which will cause more sync to occur.
+					showDialog(DIALOG_ADD_OFFICER);
+				} else {
+					// No officers present. Reset the organization mapping.
+					showDialog(DIALOG_NEED_NEW_ORGANIZATION);
+				}
+				
 			} else {
 				// Just exit, the child died or had an error.
 				finish();
@@ -210,7 +220,7 @@ public class OfficerListActivity extends ListActivity {
 			AlertDialog alert = builder.create();
 			return alert;
 		}
-			
+		
 		case DIALOG_NEED_ADDITIONAL_OFFICER:
 		{
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -221,6 +231,24 @@ public class OfficerListActivity extends ListActivity {
 			           public void onClick(DialogInterface dialog, int id) {
 			        	   dialog.dismiss();
 			        	   showDialog(DIALOG_ADD_OFFICER);
+			           }
+			       })
+			       .setTitle("Error")
+			       .setIcon(android.R.drawable.ic_dialog_alert);
+			AlertDialog alert = builder.create();
+			return alert;
+		}			
+		
+		case DIALOG_NEED_NEW_ORGANIZATION:
+		{
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage("No officer information was found for the given organization. "+
+					"Please try entering a new organization.")
+			       .setCancelable(false)
+			       .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+			           public void onClick(DialogInterface dialog, int id) {
+			        	   dialog.dismiss();
+			        	   Util.askForApplicationMapping(getContentResolver(), OfficerListActivity.this);
 			           }
 			       })
 			       .setTitle("Error")
